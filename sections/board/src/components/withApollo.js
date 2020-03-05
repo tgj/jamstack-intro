@@ -4,12 +4,15 @@ import { ApolloProvider } from 'react-apollo';
 
 const windowGlobal = typeof window !== 'undefined' && window
 
-const client = new ApolloClient({
+const client = window.location ? new ApolloClient({
     uri: `${windowGlobal.location.origin}/api/graphql`
-});
+}) : undefined;
 
 function withApollo(Component) {
-    console.log(Component);
+    if (!client) {
+        return <Component />
+    }
+    
     return (
         <>
             <ApolloProvider client={client}>
