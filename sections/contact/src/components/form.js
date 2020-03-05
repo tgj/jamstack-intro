@@ -55,6 +55,9 @@ const Form = () => {
         .then(response => response.json())
         .then(response => {
             console.log(response);
+            if (!response.ok) {
+                
+            }
             dispatch({
                 type: 'reset'
             });
