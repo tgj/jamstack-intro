@@ -54,9 +54,13 @@ const Form = () => {
         })
         .then(response => {
             if (!response.ok) {
-                throw response.json();
+                return Promise.reject(response);
             }
             return response.json();
+        })
+        .catch(async response => {
+            const error = await response.text().then(text => text);
+            return Promise.reject(error);
         })
         .then(response => {
             console.log(response);
@@ -66,7 +70,7 @@ const Form = () => {
             setStatus('SUCCESS');
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error(error);
             setStatus('ERROR');
         });
     };
