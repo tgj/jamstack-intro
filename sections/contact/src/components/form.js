@@ -61,7 +61,7 @@ const Form = () => {
             setStatus('SUCCESS');
         })
         .catch(error => {
-            console.log(error);
+            console.error('Error:', error);
             setStatus('ERROR');
         });
     };
