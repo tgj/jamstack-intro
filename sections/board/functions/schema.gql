@@ -1,0 +1,23 @@
+const typeDefs = `
+type Message {
+    content: String!
+    writtenBy: String
+    email: String!
+}
+
+type Query {
+    messages: [Message]
+}
+
+input AddMessageInput {
+    content: String!
+    writtenBy: String
+    email: String!
+}
+
+type Mutation {
+    addMessage(message: AddMessageInput!): Message!
+}
+`;
+
+module.exports = typeDefs;
