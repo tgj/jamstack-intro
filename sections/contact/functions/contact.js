@@ -20,7 +20,7 @@ exports.handler = (event, _context, callback) => {
 
     mg.messages().send(email, (error, response) => {
         callback(error, {
-            statusCode: 200,
+            statusCode: 502,
             body: JSON.stringify(response)
         });
     });
