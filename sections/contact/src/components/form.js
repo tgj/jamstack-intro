@@ -54,7 +54,7 @@ const Form = () => {
         })
         .then(response => {
             if (!response.ok) {
-                return Promise.reject(response.json())
+                throw response.json();
             }
             return response.json();
         })
