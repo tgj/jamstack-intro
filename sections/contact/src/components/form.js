@@ -52,12 +52,14 @@ const Form = () => {
             method: 'POST',
             body: JSON.stringify(state)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response)
+            }
+            return response.json();
+        })
         .then(response => {
             console.log(response);
-            if (!response.ok) {
-                
-            }
             dispatch({
                 type: 'reset'
             });
