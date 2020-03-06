@@ -108,7 +108,7 @@ ${state.message}
 
 ----- END OF MESSAGE -----
 
-Approve message: http://localhost:8888/messageApprovals?code=${approvalCode}
+Approve message: ${window.location.origin}/messageApprovals?code=${approvalCode}
 `
                 })
             })
