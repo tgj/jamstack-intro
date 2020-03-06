@@ -1,14 +1,21 @@
 import React, { useReducer } from 'react';
 import styles from './form.module.css';
-import { useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
+import { app } from 'firebase';
 
 const ADD_MESSAGE = gql`
   mutation AddMessage($message: AddMessageInput!) {
     addMessage(message: $message) {
-        writtenBy
-        email
-        content
+        code
+    }
+  }
+`;
+
+const GET_MESSAGES = gql`
+  query GetMessages($language: String!) {
+    greeting(language: $language) {
+      message
     }
   }
 `;
@@ -23,11 +30,20 @@ const INITIAL_STATE = {
 };
 
 const extractGraphQlErrors = errorResponse => {
-    const error = errorResponse.graphQLErrors[0];
-    if (error && error.extensions) {
-        return Object.values(error.extensions.validationErrors);
+    if (errorResponse.networkError) {
+        return [errorResponse.networkError.name];
     }
-    return [ JSON.stringify(errorResponse) ];
+
+    const graphQLErrors = errorResponse.graphQLErrors || [];
+
+    if (graphQLErrors.length > 0) {
+        const graphQLErrorResponse = graphQLErrors[0];
+        if (graphQLErrorResponse.extensions && graphQLErrorResponse.extensions.validationErrors) {
+            return Object.values(graphQLErrorResponse.extensions.validationErrors);
+        }
+    }
+
+    return [errorResponse.message];
 };
 
 const reducer = (state, action) => {
@@ -86,10 +102,24 @@ const Form = () => {
                 email: state.email
             }
         }})
-        .then(() => {
+        .then(addMessageData => {
+            const approvalCode = addMessageData.data.addMessage.code;
             fetch('/api/contact', {
                 method: 'POST',
-                body: JSON.stringify(state)
+                body: JSON.stringify({
+                    ...state,
+                    message: `
+Hi there, you've received a new message:
+
+----- START OF MESSAGE -----
+
+${state.message}
+
+----- END OF MESSAGE -----
+
+Approve message: http://localhost:8888/messageApprovals?code=${approvalCode}
+`
+                })
             })
             .then(response => {
                 if (!response.ok) {
@@ -102,7 +132,6 @@ const Form = () => {
                 return Promise.reject(error);
             })
             .then(response => {
-                console.log(response);
                 dispatch({
                     type: 'reset'
                 });
@@ -139,8 +168,8 @@ const Form = () => {
             <>
                 <ul className={styles.error} style={{listStyle: 'none'}}>
                     {
-                        state.errors.map(error => (
-                            <li>{ error }</li>
+                        state.errors.map((error, i) => (
+                            <li key={i}>{ error }</li>
                         ))
                     }
                 </ul>
