@@ -2,6 +2,7 @@ const apolloLambda = require('apollo-server-lambda');
 const firebase = require('firebase');
 const typeDefs = require('./schema.gql');
 const _ = require('lodash');
+require('@grpc/grpc-js');
 
 const {
     ApolloServer,
