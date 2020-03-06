@@ -24,7 +24,10 @@ const INITIAL_STATE = {
 
 const extractGraphQlErrors = errorResponse => {
     const error = errorResponse.graphQLErrors[0];
-    return Object.values(error.extensions.validationErrors);
+    if (error.extensions) {
+        return Object.values(error.extensions.validationErrors);
+    }
+    return [ error.errorMessage ];
 };
 
 const reducer = (state, action) => {
