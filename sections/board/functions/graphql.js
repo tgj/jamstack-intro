@@ -28,7 +28,7 @@ const database = firebase.database();
 const resolvers = {
     Query: {
       messages: () =>
-        databse
+        database
           .ref("messages")
           .once("value")
           .then(snap => snap.val())
