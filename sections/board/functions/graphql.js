@@ -74,7 +74,7 @@ const resolvers = {
             const messageApproval = {
                 id: uuid(),
                 code: hashedApprovalCode,
-                message: finalMessage.ID,
+                message: finalMessage.id,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString() 
             };

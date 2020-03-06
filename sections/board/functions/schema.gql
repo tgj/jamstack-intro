@@ -13,7 +13,7 @@ type Message {
 
 type AddMessageResponse {
     code: String!
-};
+}
 
 type MessageApproval {
     id: ID!
