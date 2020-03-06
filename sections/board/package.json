@@ -22,6 +22,6 @@
   },
   "scripts": {
     "develop": "gatsby develop",
-    "build": "gatsby build && npm rebuild grpc --force"
+    "build": "cd functions && npm i && npm rebuild grpc --force && cd .. && gatsby build"
   }
 }
