@@ -1,21 +1,12 @@
 import React, { useReducer } from 'react';
 import styles from './form.module.css';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { app } from 'firebase';
 
 const ADD_MESSAGE = gql`
   mutation AddMessage($message: AddMessageInput!) {
     addMessage(message: $message) {
         code
-    }
-  }
-`;
-
-const GET_MESSAGES = gql`
-  query GetMessages($language: String!) {
-    greeting(language: $language) {
-      message
     }
   }
 `;
@@ -75,7 +66,7 @@ const reducer = (state, action) => {
 
 const Form = () => {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-    const [addMessage, { data}] =  useMutation(ADD_MESSAGE);
+    const [addMessage] =  useMutation(ADD_MESSAGE);
 
     const updateFieldValue = field => event => {
         dispatch({
