@@ -1,20 +1,17 @@
 const apolloLambda = require('apollo-server-lambda');
 const admin = require("firebase-admin");
 const serviceAccount = require("../syt-message-boards-firebase-adminsdk-c8v4x-0ef7594166.json");
+const typeDefs = require('./schema.gql');
+const _ = require('lodash');
+const {
+    ApolloServer,
+    UserInputError
+} = apolloLambda;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://syt-message-boards.firebaseio.com"
 });
-
-const typeDefs = require('./schema.gql');
-const _ = require('lodash');
-const gprc = require('@grpc/grpc-js');
-
-const {
-    ApolloServer,
-    UserInputError
-} = apolloLambda;
 
 const database = admin.firestore();
 
