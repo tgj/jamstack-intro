@@ -1,19 +1,29 @@
 const apolloLambda = require('apollo-server-lambda');
-const admin = require("firebase-admin");
-const serviceAccount = require("../syt-message-boards-firebase-adminsdk-c8v4x-0ef7594166.json");
+const firebase = require('firebase');
 const typeDefs = require('./schema.gql');
 const _ = require('lodash');
+
 const {
     ApolloServer,
     UserInputError
 } = apolloLambda;
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://syt-message-boards.firebaseio.com"
-});
+const firebaseConfig = {
+    apiKey: "AIzaSyC9rNHlFcidcdRlskyQQAejaQYwjOEdlNA",
+    authDomain: "syt-message-boards.firebaseapp.com",
+    databaseURL: "https://syt-message-boards.firebaseio.com",
+    projectId: "syt-message-boards",
+    storageBucket: "syt-message-boards.appspot.com",
+    messagingSenderId: "319927989043",
+    appId: "1:319927989043:web:96847d4f5064d4b81b8446",
+    measurementId: "G-SP16Z4Q2S0"
+};
 
-const database = admin.firestore();
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const database = firebase.database();
 
 const resolvers = {
     Query: {
