@@ -8,4 +8,5 @@ public
 .netlify
 
 # Local Firebase folder
+.firebase
 .Firebase
