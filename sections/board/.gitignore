@@ -10,3 +10,5 @@ public
 # Local Firebase folder
 .firebase
 .Firebase
+
+.DS_Store

@@ -3,11 +3,13 @@ const firebase = require('firebase/app');
 require('firebase/database');
 const typeDefs = require('./schema.gql');
 const _ = require('lodash');
-
+const { GraphQLDateTime } = require('graphql-iso-date');
 const {
     ApolloServer,
     UserInputError
 } = apolloLambda;
+const { uuid } = require('uuidv4');
+const md5 = require('md5');
 
 const firebaseConfig = {
     apiKey: "AIzaSyC9rNHlFcidcdRlskyQQAejaQYwjOEdlNA",
@@ -27,6 +29,7 @@ if (!firebase.apps.length) {
 const database = firebase.database();
 
 const resolvers = {
+    DateTime: GraphQLDateTime,
     Query: {
       messages: () =>
         database
@@ -56,8 +59,42 @@ const resolvers = {
                 );
             }
 
-            await database.ref('messages/').push(compactMessage);
-            return compactMessage;
+            const finalMessage = {
+                ...compactMessage,
+                id: uuid(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            }
+
+            await database.ref('messages/').push(finalMessage);
+
+            const approvalCode = uuid();
+            const hashedApprovalCode = md5(approvalCode);
+
+            const messageApproval = {
+                id: uuid(),
+                code: hashedApprovalCode,
+                message: finalMessage.ID,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString() 
+            };
+
+            await database.ref('messageApprovals').push(messageApproval);
+
+            return {
+                code: approvalCode
+            };
+        },
+        approveMessage: async (root, { approval }) => {
+            const messageApprovalTable = await database.ref('messageApprovals')
+            const approvalRecords = await messageApprovalTable.orderByChild('id').equalTo('000b664c-98dd-4c2f-a823-a4633de0b1a2').once('value');
+
+            if (approvalRecords.length === 1) {
+                const record = approvals[0];
+                if (record.code === approval.code) {
+                    // Database logic to update message and messageApproval objects
+                }
+            }
         }
     }
   };

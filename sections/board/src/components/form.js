@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import styles from './form.module.css';
-import { useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 const ADD_MESSAGE = gql`
@@ -9,6 +9,14 @@ const ADD_MESSAGE = gql`
         writtenBy
         email
         content
+    }
+  }
+`;
+
+const GET_MESSAGES = gql`
+  query GetMessages($language: String!) {
+    greeting(language: $language) {
+      message
     }
   }
 `;
@@ -23,11 +31,20 @@ const INITIAL_STATE = {
 };
 
 const extractGraphQlErrors = errorResponse => {
-    const error = errorResponse.graphQLErrors[0];
-    if (error && error.extensions) {
-        return Object.values(error.extensions.validationErrors);
+    if (errorResponse.networkError) {
+        return [errorResponse.networkError.name];
     }
-    return [ JSON.stringify(errorResponse) ];
+
+    const graphQLErrors = errorResponse.graphQLErrors;
+
+    if (graphQLErrors.length > 0) {
+        const graphQLErrorResponse = graphQLErrors[0];
+        if (graphQLErrorResponse.extensions && graphQLErrorResponse.extensions.validationErrors) {
+            return Object.values(graphQLErrorResponse.extensions.validationErrors);
+        }
+    }
+
+    return [errorResponse.message];
 };
 
 const reducer = (state, action) => {
@@ -86,7 +103,7 @@ const Form = () => {
                 email: state.email
             }
         }})
-        .then(() => {
+        .then(data => {
             fetch('/api/contact', {
                 method: 'POST',
                 body: JSON.stringify(state)

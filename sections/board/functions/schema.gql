@@ -1,8 +1,27 @@
 const typeDefs = `
+scalar DateTime
+
 type Message {
+    id: ID!
     content: String!
     writtenBy: String
     email: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    approvedAt: DateTime
+}
+
+type AddMessageResponse {
+    code: String!
+};
+
+type MessageApproval {
+    id: ID!
+    code: String!
+    message: Message
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    approvedAt: DateTime
 }
 
 type Query {
@@ -15,8 +34,13 @@ input AddMessageInput {
     email: String!
 }
 
+input MessageApprovalInput {
+    approvalId: ID!
+}
+
 type Mutation {
-    addMessage(message: AddMessageInput!): Message!
+    addMessage(message: AddMessageInput!): AddMessageResponse!
+    approveMessage(input: MessageApprovalInput!): Boolean!
 }
 `;
 
