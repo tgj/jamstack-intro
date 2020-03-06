@@ -23,8 +23,6 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-
-
 const database = firebase.database();
 
 const resolvers = {
