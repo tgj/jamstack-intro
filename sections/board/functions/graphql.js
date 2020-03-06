@@ -1,5 +1,6 @@
 const apolloLambda = require('apollo-server-lambda');
 const firebase = require('firebase');
+require('firebase/database');
 const typeDefs = require('./schema.gql');
 const _ = require('lodash');
 
