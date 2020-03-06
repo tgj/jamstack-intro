@@ -27,7 +27,7 @@ const extractGraphQlErrors = errorResponse => {
     if (error && error.extensions) {
         return Object.values(error.extensions.validationErrors);
     }
-    return [ errorResponse.errorMessage ];
+    return [ JSON.stringify(errorResponse) ];
 };
 
 const reducer = (state, action) => {
