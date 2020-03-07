@@ -5,9 +5,13 @@ import {
 } from 'react-google-recaptcha-v3';
 
 function WithreCAPTCHA(WrappedComponent, props) {
+    console.log(props);
 
     const { executeRecaptcha } = useGoogleReCaptcha();
-    // const token = executeRecaptcha(props.action);
+    if (executeRecaptcha) {
+        const token = executeRecaptcha(props.action);
+        console.log(token);
+    }
 
     return (
         <GoogleReCaptchaProvider 
