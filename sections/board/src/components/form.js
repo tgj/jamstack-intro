@@ -211,7 +211,17 @@ Approve message: ${window.location.origin}/messageApprovals?code=${approvalCode}
                         onChange={updateFieldValue('message')} 
                     />
                 </label>
-                <button className={`${styles.button} ${styles.centered}`}>Send</button>
+                <label className={styles.hidden}>
+                    BotName
+                    <input 
+                        className={styles.input}
+                        type="text"
+                        name="name"
+                        value={state.name}
+                        onChange={updateFieldValue('name')}
+                    />
+                </label>
+                <button className={`${styles.button} ${styles.centered} ${styles.fullwidth}`}>Send</button>
             </form>
         </>
     )

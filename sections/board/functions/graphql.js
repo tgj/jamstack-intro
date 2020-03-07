@@ -69,11 +69,10 @@ const resolvers = {
             await database.ref('messages/').push(finalMessage);
 
             const approvalCode = uuid();
-            const hashedApprovalCode = md5(approvalCode);
 
             const messageApproval = {
                 id: uuid(),
-                code: hashedApprovalCode,
+                code: md5(approvalCode),
                 message: finalMessage.id,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString() 
@@ -81,20 +80,28 @@ const resolvers = {
 
             await database.ref('messageApprovals').push(messageApproval);
 
-            return {
-                code: approvalCode
-            };
+            return { code: approvalCode };
         },
-        approveMessage: async (root, { approval }) => {
-            const messageApprovalTable = await database.ref('messageApprovals')
-            const approvalRecords = await messageApprovalTable.orderByChild('id').equalTo('000b664c-98dd-4c2f-a823-a4633de0b1a2').once('value');
+        approveMessage: async (root, { approval: { code = '' } }) => {
+            const messageApprovalTable = await database.ref('messageApprovals');
+
+            const confirmationCode = md5(approval.code);
+
+            const approvalRecords = await messageApprovalTable
+                .orderByChild('code')
+                .equalTo(confirmationCode)
+                .once('value');
 
             if (approvalRecords.length === 1) {
-                const record = approvals[0];
+                const record = approvalRecords[0];
                 if (record.code === approval.code) {
-                    // Database logic to update message and messageApproval objects
+                    // Update Message
+
+                    // Update MessageApproval
                 }
             }
+            
+            return false;
         }
     }
   };
