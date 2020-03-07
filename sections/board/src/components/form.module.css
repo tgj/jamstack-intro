@@ -50,6 +50,10 @@
     margin-right: auto;
 }
 
+.button.fullwidth {
+    width: 100%;
+}
+
 /* Form pending styles */
 .form.pending {
     position: relative;
@@ -108,4 +112,8 @@
     background: rgba(255, 0, 0, 0.1);
     border: 1px solid red;
     padding: 1rem;
+}
+
+.hidden {
+    visibility: hidden;
 }
