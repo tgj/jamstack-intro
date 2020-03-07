@@ -4,9 +4,11 @@ import withApollo from '../components/withApollo';
 import Form from '../components/form';
 import withreCAPTCHA from '../components/withreCAPTCHA';
 
+
 const App = () => {
+    const action = 'message-board-submit';
     const formWithReCaptcha = withreCAPTCHA(Form, {
-        action: 'message-board',
+        action
     });
     
     return (

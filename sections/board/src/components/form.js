@@ -2,6 +2,9 @@ import React, { useReducer } from 'react';
 import styles from './form.module.css';
 import { useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
+import {
+    useGoogleReCaptcha
+} from 'react-google-recaptcha-v3';
 
 const ADD_MESSAGE = gql`
   mutation AddMessage($message: AddMessageInput!) {
@@ -64,7 +67,7 @@ const reducer = (state, action) => {
     }
 };
 
-const Form = () => {
+const Form = props => {
     const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
     const [addMessage] =  useMutation(ADD_MESSAGE);
 
@@ -81,8 +84,24 @@ const Form = () => {
         status
     });
 
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
+    const reCaptchaHandler = async action => {
+        if (!executeRecaptcha) {
+            return;
+          }
+      
+          const result = await executeRecaptcha(action);
+      
+          console.log(result);
+    };
+
     const handleSubmit = event => {
         event.preventDefault();
+
+        if (props.reCAPTCHA) {
+            reCaptchaHandler('addMessage');
+        }
       
         setStatus('PENDING');
 
