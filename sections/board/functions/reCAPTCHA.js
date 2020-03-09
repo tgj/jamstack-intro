@@ -1,13 +1,6 @@
 require('dotenv').config();
 require('isomorphic-fetch');
 
-// Source: https://developers.google.com/recaptcha/docs/verify
-//
-// URL: https://www.google.com/recaptcha/api/siteverify METHOD: POST
-// POST Parameter	Description
-// secret	Required. The shared key between your site and reCAPTCHA.
-// response	Required. The user response token provided by the reCAPTCHA client-side integration on your site.
-// remoteip	Optional. The user's IP address.
 exports.handler = (event, _context, callback) => {
     const data = JSON.parse(event.body);
 
