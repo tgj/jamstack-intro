@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 exports.handler = (event, _context, callback) => {
-    console.log(event);
     const mailgun = require('mailgun-js');
     
     const mg = mailgun({

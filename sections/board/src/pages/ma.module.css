@@ -1,0 +1,10 @@
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+    display: table;
+}
+
+.closeMessage {
+    padding: 2rem;
+    font-size: .7rem;
+}

@@ -39,10 +39,10 @@ const resolvers = {
           .then(val => Object.keys(val).map(key => val[key]))
     },
     Mutation: {
-        addMessage: async (root, { message }) => {
+        addMessage: async (root, { input }) => {
             const validationErrors = {};
 
-            const compactMessage = _.pickBy(message);
+            const compactMessage = _.pickBy(input);
 
             if(!compactMessage.email) {
                 validationErrors.email = 'Email field is required.'
@@ -82,26 +82,70 @@ const resolvers = {
 
             return { code: approvalCode };
         },
-        approveMessage: async (root, { approval: { code = '' } }) => {
-            const messageApprovalTable = await database.ref('messageApprovals');
+        approveMessage: async (root, { input }) => {
+            const messageTable =  database.ref('messages');
+            const messageApprovalTable =  database.ref('messageApprovals');
 
-            const confirmationCode = md5(approval.code);
-
+            const confirmationCode = md5(input.approvalId);
             const approvalRecords = await messageApprovalTable
                 .orderByChild('code')
                 .equalTo(confirmationCode)
                 .once('value');
 
-            if (approvalRecords.length === 1) {
-                const record = approvalRecords[0];
-                if (record.code === approval.code) {
-                    // Update Message
+            const data = approvalRecords.val();
+            const makeys = Object.keys(data);
+            const recordLength = makeys.length;
 
-                    // Update MessageApproval
+            if (recordLength === 1) {
+                const record = data[makeys[0]];
+                const shouldLookupAssociatedMessage = 
+                    !record.approvedAt && 
+                    record.code === confirmationCode;
+                
+                if (shouldLookupAssociatedMessage) {
+
+                    const messages = await messageTable
+                        .orderByChild('id')
+                        .equalTo(record.message)
+                        .once('value');
+                    
+                    const messageData = messages.val();
+                    const messageKeys = Object.keys(messageData);
+                    const messageDataLength = messageKeys.length;
+
+                    if (messageDataLength === 1) {
+
+                        await messageApprovalTable.child(makeys[0]).update({
+                            'approvedAt': new Date().toISOString()
+                        }, () => {
+                            console.log('message approval update complete');
+                        });
+
+                        await messageTable.child(messageKeys[0]).update({
+                            'approvedAt': new Date().toISOString()
+                        }, data => {
+                            console.log('message update complete')
+                        });
+
+                        return {
+                            approved: true
+                        };
+
+                    } else {
+                        throw new InternalError(
+                            'Unable to approve message'
+                        );
+                    }
+                } else {
+                    return {
+                        approved: false
+                    }
                 }
             }
-            
-            return false;
+
+            return {
+                approved: false
+            };
         }
     }
   };

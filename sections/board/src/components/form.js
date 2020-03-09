@@ -5,10 +5,11 @@ import { gql } from 'apollo-boost';
 import {
     useGoogleReCaptcha
 } from 'react-google-recaptcha-v3';
+import { extractGraphQlErrors } from '../lib/util';
 
 const ADD_MESSAGE = gql`
-  mutation AddMessage($message: AddMessageInput!) {
-    addMessage(message: $message) {
+  mutation AddMessage($input: AddMessageInput!) {
+    addMessage(input: $input) {
         code
     }
   }
@@ -21,23 +22,6 @@ const INITIAL_STATE = {
     email: '',
     topic: 'Tech Talk Ideas',
     status: 'IDLE'
-};
-
-const extractGraphQlErrors = errorResponse => {
-    if (errorResponse.networkError) {
-        return [errorResponse.networkError.name];
-    }
-
-    const graphQLErrors = errorResponse.graphQLErrors || [];
-
-    if (graphQLErrors.length > 0) {
-        const graphQLErrorResponse = graphQLErrors[0];
-        if (graphQLErrorResponse.extensions && graphQLErrorResponse.extensions.validationErrors) {
-            return Object.values(graphQLErrorResponse.extensions.validationErrors);
-        }
-    }
-
-    return [errorResponse.message];
 };
 
 const reducer = (state, action) => {
@@ -136,7 +120,7 @@ const Form = props => {
         setStatus('PENDING');
 
         addMessage({ variables: { 
-            message: {
+            input: {
                 content: state.message,
                 writtenBy: state.name,
                 email: state.email
