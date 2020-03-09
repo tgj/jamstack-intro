@@ -123,7 +123,7 @@ const Form = props => {
 
         if (props.reCAPTCHA) {
             const reCAPTCHAVerificationResult = await reCaptchaHandler('addMessage');
-            if (reCAPTCHAVerificationResult === false) {
+            if (reCAPTCHAVerificationResult.success === false) {
                 dispatch({
                     type: 'updateStatus',
                     status: 'ERROR',

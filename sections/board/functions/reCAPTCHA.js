@@ -19,7 +19,7 @@ exports.handler = (event, _context, callback) => {
         const allow = response.success;
         callback(null, {
             statusCode: 200,
-            body: JSON.stringify(allow)
+            body: JSON.stringify(response)
         });
     })
     .catch(error => {
