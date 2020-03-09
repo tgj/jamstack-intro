@@ -136,10 +136,6 @@ const resolvers = {
                             'Unable to approve message'
                         );
                     }
-                } else {
-                    return {
-                        approved: false
-                    }
                 }
             }
 
