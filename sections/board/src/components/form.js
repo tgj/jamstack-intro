@@ -105,6 +105,8 @@ const Form = props => {
     const handleSubmit = async event => {
         event.preventDefault();
 
+        setStatus('PENDING');
+
         if (props.reCAPTCHA) {
             const reCAPTCHAVerificationResult = await reCaptchaHandler('addMessage');
             if (reCAPTCHAVerificationResult === false) {
@@ -117,8 +119,6 @@ const Form = props => {
             };
         }
       
-        setStatus('PENDING');
-
         addMessage({ variables: { 
             input: {
                 content: state.message,
@@ -141,7 +141,7 @@ ${state.message}
 
 ----- END OF MESSAGE -----
 
-Approve message: ${window.location.origin}/messageApprovals?code=${approvalCode}
+Approve message ✅: ${window.location.origin}/messageApprovals?code=${approvalCode}
 `
                 })
             })
