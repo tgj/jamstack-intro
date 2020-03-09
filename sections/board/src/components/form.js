@@ -87,20 +87,50 @@ const Form = props => {
     const { executeRecaptcha } = useGoogleReCaptcha();
 
     const reCaptchaHandler = async action => {
+
         if (!executeRecaptcha) {
             return;
-          }
+        }
       
-          const result = await executeRecaptcha(action);
-      
-          console.log(result);
+        const token = await executeRecaptcha(action);
+
+        const result = await fetch('/api/reCAPTCHA', {
+            method: 'POST',
+            body: JSON.stringify({
+                token
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response)
+            }
+            return response.json();
+        })
+        .catch(async response => {
+            const error = await response.text().then(text => text);
+            return Promise.reject(error);
+        })
+        .then(response => response)
+        .catch(error => {
+            console.error(error);
+        });
+
+        return result;
     };
 
-    const handleSubmit = event => {
+    const handleSubmit = async event => {
         event.preventDefault();
 
         if (props.reCAPTCHA) {
-            reCaptchaHandler('addMessage');
+            const reCAPTCHAVerificationResult = await reCaptchaHandler('addMessage');
+            if (reCAPTCHAVerificationResult === false) {
+                dispatch({
+                    type: 'updateStatus',
+                    status: 'ERROR',
+                    errors: ["Unable to perform this action"]
+                });
+                return;
+            };
         }
       
         setStatus('PENDING');
